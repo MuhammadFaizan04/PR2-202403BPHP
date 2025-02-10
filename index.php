@@ -18,3 +18,10 @@ $empName = "hassan";
 $empAge = 24;
 $empEmail = "hassan@gmail.com"
 ?>
+<h1><?php echo $empName .  " " . $empEmail?></h1>
+<h2><?php echo $empAge?></h2>
+<h3><?php echo $stdName , " " ,$stdAge?></h3>
+<?php
+echo $stdName,   $stdAge ,"<br>" ;
+// print $stdName , $stdAge;
+?>
