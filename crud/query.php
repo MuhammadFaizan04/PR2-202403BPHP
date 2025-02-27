@@ -1,6 +1,7 @@
 <?php
 
 include("dbcon.php");
+session_start();
 
 $userName = $userEmail = $userPassword = $userConfirmPassword = "";
 $userNameErr = $userEmailErr = $userPasswordErr = $userConfirmPasswordErr = "";
@@ -52,6 +53,61 @@ $query->bindParam('uPassword',$userPassword);
 $query->execute();
 echo"<script>alert('User Register');location.assign('signup.php')</script>";
 }
+
+}
+
+
+
+if(isset($_POST['userLogin'])){
+    $userEmail = $_POST['uEmail'];
+    $userPassword = $_POST['uPassword'];
+    if(empty($userEmail)){
+        $userEmailErr = "required email";
+    }
+
+    else{
+        $query = $pdo->prepare("select * from users where email = :uEmail");
+        $query->bindParam('uEmail',$userEmail);
+        $query->execute();
+        $user = $query->fetch(PDO::FETCH_ASSOC);
+        // print_r($user);
+        // die();
+        if($user){
+            if($user['password'] == $userPassword){
+                if($user['role_id']==1){
+                    $_SESSION['adminId'] = $user['id'];
+                    $_SESSION['adminName'] = $user['name'];
+                    $_SESSION['adminRoleId'] = $user['role_id'];
+                    echo "<script>location.assign('login.php?error=admin login')</script>";
+                }
+
+                elseif($user['role_id']==2){
+                    $_SESSION['userId'] = $user['id'];
+                    $_SESSION['userName'] = $user['name'];
+                    $_SESSION['userRoleId'] = $user['role_id'];
+                    echo "<script>location.assign('login.php?error=user login')</script>";
+
+                }
+                
+            }
+
+            else{
+                // echo "<script>location.assign('login.php?error=password not matched')</script>";
+                $userPasswordErr = "password not matched";
+            }
+
+        }
+
+        else{
+            // echo "<script>location.assign('login.php?error=notfound')</script>";
+            $userEmailErr = "user not found";
+        }
+    }
+
+    if(empty($userPassword)){
+        $userPasswordErr = "password is required";
+
+    }
 
 }
 ?>
